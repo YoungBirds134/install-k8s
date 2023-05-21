@@ -10,6 +10,7 @@
     sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
     && sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     && sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+
     && apt-cache policy docker-ce
     && sudo apt install docker-ce -y
     && sudo usermod -aG docker ${USER}
@@ -32,7 +33,7 @@
     && curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
     && echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" >> ~/kubernetes.list
     && sudo mv ~/kubernetes.list /etc/apt/sources.list.d
-    && sudo apt update -y
+
     && sudo apt install kubelet -y
     && sudo apt install kubeadm -y
     && sudo apt install kubectl -y
@@ -78,15 +79,15 @@
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #install dashboard
 #create tls
-    sudo mkdir /certs
-    && sudo chmod -R 777 /certs
-    && sudo  openssl req -nodes -newkey rsa:2048 -keyout /certs/dashboard.key -out /certs/dashboard.csr -subj "/C=/ST=/L=/O=/OU=/CN=kubernetes-dashboard"
-    && sudo openssl x509 -req -sha256 -days 365 -in /certs/dashboard.csr -signkey /certs/dashboard.key -out /certs/dashboard.crt
-    && sudo chmod -R 777 /certs
+    sudo mkdir /home/huynt/bin/certs
+    && sudo chmod -R 777 /home/huynt/bin/certs
+    && sudo  openssl req -nodes -newkey rsa:2048 -keyout /home/huynt/bin/certs/dashboard.key -out /home/huynt/bin/certs/dashboard.csr -subj "/C=/ST=/L=/O=/OU=/CN=kubernetes-dashboard"
+    && sudo openssl x509 -req -sha256 -days 365 -in /home/huynt/bin/certs/dashboard.csr -signkey /home/huynt/bin/certs/dashboard.key -out /home/huynt/bin/certs/dashboard.crt
+    && sudo chmod -R 777 /home/huynt/bin/certs
     -------------------------------------------------
     kubectl create ns kubernetes-dashboard
     kubectl label node huynt role=kubernetes-dashboard
-    kubectl create secret generic kubernetes-dashboard-certs --from-file=/certs -n kubernetes-dashboard
+    kubectl create secret generic kubernetes-dashboard-certs --from-file=/home/huynt/bin/certs -n kubernetes-dashboard
 
 #run file dashboard.yaml
     kubectl apply -f  dashboard.yaml
