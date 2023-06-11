@@ -1,0 +1,109 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: my-domain-test
+  namespace: default
+spec:
+  secretName: test-domain-tls
+  issuerRef:
+    name: letsencrypt-prod-cloudflare
+
+  duration: 2160h # 90d
+  renewBefore: 720h # 30d before SSL will expire, renew it
+  dnsNames:
+    - "{domain}.{tld}"
+    - "*.{domain}.{tld}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudflare-api-token-secret
+type: Opaque
+stringData:
+  api-token: Ps9_Ei_B8oBm1lCg020GHNNfZAvhy2QOlMSm9QtC #Token mà tạo ở CloudFlare
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-prod-cloudflare
+spec:
+  acme:
+    email: huynguyen2913@gmail.com #Email
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - dns01:
+        cloudflare:
+          email: huynguyen2913@gmail.com #Email
+          apiTokenSecretRef:
+            name: cloudflare-api-token-secret
+            key: api-token
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kuard
+spec:
+  selector:
+    matchLabels:
+      app: kuard
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kuard
+    spec:
+      containers:
+      - image: gcr.io/kuar-demo/kuard-amd64:1
+        imagePullPolicy: Always
+        name: kuard
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuard
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: kuard
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kuard
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    cert-manager.io/issuer: letsencrypt-prod-cloudflare
+
+spec:
+  tls:
+   - hosts:
+      - www.congcu24h.com #domain
+     secretName:  my-domain-test
+  rules:
+  - host: www.congcu24h.com #domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kuard
+            port:
+              number: 80
+  - host: congcu24h.com #domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kuard
+            port:
+              number: 80
