@@ -1,0 +1,33 @@
+ingress:
+  enabled: true
+  hosts:
+    - registry.congcu24h.com
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-body-size: "30720m"
+  tls:
+    - secretName: docker-registry-prod
+      hosts:
+        - registry.congcu24h.com
+
+#storage: s3
+
+#secrets:
+#  htpasswd: ""
+#  s3:
+#    accessKey: "your_space_access_key"
+#    secretKey: "your_space_secret_key"
+
+#s3:
+#  region: your_space_region
+#  regionEndpoint: your_space_region.digitaloceanspaces.com
+#  secure: true
+#  bucket: your_space_name
+
+image:
+  repository: youngbird/registry
+  tag: dev
+
+  htpasswd: |-
+    htpasswd_file_contents
