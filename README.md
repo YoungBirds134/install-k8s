@@ -206,7 +206,26 @@
         sudo scp  master@172.16.128.134:/etc/kubernetes/admin.conf ~/.kube/config-mycluster
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------ERROR InternalError (failed calling webhook "ipaddresspoolvalidationwebhook.metallb.io") #1540 WHEN INSTALL  MetalLB---------------------------------------------------------------------------------------------------------------------------------------
+       https://github.com/metallb/metallb/issues/1540
+       
+    Good day. I found the solution.
+    So, for solve it i needed to create new cluster.
+    First of all, when i use:
+    kubeadm init --pod-network-cidr=10.244.0.0/16 i had an eror. That system can`t find --cri-socket. Problem fixed by adding
+    --cri-socket=unix:///var/run/cri-dockerd.sock .
+    When i create cluster, as explained above i had this issue. But note: connect: connection refused it means that host refuse connection. Also, it no matter with what webhook service o worked.
+    
+    Actually, i had two solution:
+    
+    Delete rule ValidatingWebhookConfiguration for metallb-webhook-configuration;
+    Update failurePolicy=Ignore for rule ValidatingWebhookConfiguration for metallb-webhook-configuration.
+    Second one is batter than first one, nut both of them are not solve the cause of the problem.
+    So, i waste much time to find good solution, and during it killed my cluster :)
+    But for recreation it, i decide to use --cri-socket=unix:///var/run/containerd/containerd.sock
+    After manipulation, i tried to set up metalLb againe. And now, my problem pass.
+    So, as i understood correctly this problem connect with docker and working with it IP pool. For full understanding needs find what difference between unix:///var/run/containerd/containerd.sock and unix:///var/run/cri-dockerd.sock
+    PS: I`m use kubeadm version 1.24.0.
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
