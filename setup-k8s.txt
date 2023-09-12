@@ -3,7 +3,7 @@
 # Setup Aliases
 alias kg='kubectl get'
 alias kdd='kubectl delete -f '
-alias kd='kubectl describe'
+alias kd='kubcetl describe'
 alias ka='kubcetl apply -f '
 alias k='kubectl'
 alias ns='kubectl config set-context --current --namespace'
