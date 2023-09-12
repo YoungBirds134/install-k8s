@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 # Setup Aliases
+alias kg='kubectl get'
+alias kdd='kubectl delete -f '
+alias kd='kubectl describe'
+alias ka='kubcetl apply -f '
 alias k='kubectl'
 alias ns='kubectl config set-context --current --namespace'
 alias kurrent='kubectl config view --minify -o "jsonpath={..namespace}" | xargs -I %s echo "Current Namespace: %s"'
