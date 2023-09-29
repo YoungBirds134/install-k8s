@@ -64,7 +64,7 @@
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #init node in k8s
 
-    sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --pod-network-cidr=10.244.0.0/16
+    sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --apiserver-advertise-address=192.168.1.13  --pod-network-cidr=10.244.0.0/16
     && sudo rm -rf $HOME/.kube
     && sudo mkdir -p $HOME/.kube
     && sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
