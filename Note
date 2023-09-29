@@ -1,0 +1,17 @@
+------*
+
+  * Master node chỉ để điều phối quản lý ns system 
+  * Ingress controller chạy ở worker và làm việc chính ở worker node 
+  * Nat port và cài LoadBalance nếu không có server LB thì dùng IP node worker chính  gán cho LB 
+  * telnet 192.168.1.13 30126 (port 30126 dùng chính)
+  * Có thể tạo https file pem rồi map vào 
+  * Chọn Node worker chính để quản lý nhóm khác  
+
+  ----
+
+  nodeSelector:
+	kubernetes.io/hostname: 'ict-offline-prod-tu0ce8qa-worker-iuv91w55'  
+
+  ----
+
+  *VD: ingress-nginx    ingress-nginx-controller             LoadBalancer   10.99.240.93     192.168.1.13   80:32499/TCP,443:30126/TCP   17h
