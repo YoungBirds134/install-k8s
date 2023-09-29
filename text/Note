@@ -21,3 +21,11 @@
   ----
 
   *VD: ingress-nginx    ingress-nginx-controller             LoadBalancer   10.99.240.93     192.168.1.13   80:32499/TCP,443:30126/TCP   17h
+
+------*ERROR Fixing 'NotFound' Error: Resolving Issues with kubectl exec and logs in Kubernetes
+
+    Khi lần đầu deploy component ở Worker sẽ gặp lỗi này -> không lấy được logs của pod, không attach hay excep
+    (Failed to load logs: the server could not find the requested resource ( pods/log)
+    https://www.youtube.com/watch?v=sSwlcTwG52U
+
+---
