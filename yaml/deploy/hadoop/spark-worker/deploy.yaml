@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf-spark-worker
+  namespace: default
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes  1;
+    events {
+      worker_connections  10240;
+    }
+    http {
+      upstream spark-worker {
+        server 192.168.1.11:8081;
+      }
+      server {
+        listen       80;
+        server_name  localhost;
+        location / {
+          #root   /usr/share/nginx/html; #Change this line
+          #index  index.html index.htm;
+          proxy_pass http://spark-worker;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+      }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-spark-worker
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nginx-spark-worker
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-spark-worker
+    spec:
+      containers:
+      - name: nginx-spark-worker
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+            - name: nginx-conf-spark-worker
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+      volumes:
+      - name: nginx-conf-spark-worker
+        configMap:
+          name: nginx-conf-spark-worker
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-worker-service
+  namespace: default
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 80
+  selector:
+    app: nginx-spark-worker
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: default
+  name: spark-worker-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+    #nginx.ingress.kubernetes.io/rewrite-target: /$2
+    cert-manager.io/issuer: "letsencrypt-prod"
+spec:
+  tls:
+   - hosts:
+      - spark-worker.congcu24h.com #domain
+     secretName:  test-domain-tls
+  rules:
+  - host: spark-worker.congcu24h.com #domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: spark-worker-service
+            port:
+              number: 8080

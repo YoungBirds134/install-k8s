@@ -1,5 +1,11 @@
 ------*
 
+  * Init K8s và join worker -> Cài ingress controller -> Cài MetalLB (trỏ ip node worker) -> 
+
+  -> Cài Cert-Manager -> Login Clouflare lấy token cài isusser -> Running 
+
+------*
+
   * Master node chỉ để điều phối quản lý ns system 
   * Ingress controller chạy ở worker và làm việc chính ở worker node 
   * Nat port và cài LoadBalance nếu không có server LB thì dùng IP node worker chính  gán cho LB 
