@@ -1,0 +1,9 @@
+[Unit]
+Description=webserver Daemon
+
+[Service]
+ExecStart=/usr/bin/java  -jar agent.jar -jnlpUrl https://jenkins.congcu24h.com/computer/Agent%20inbound%2Dagent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/huynt/bin/app/jenkins"
+User=user
+
+[Install]
+WantedBy=multi-user.target

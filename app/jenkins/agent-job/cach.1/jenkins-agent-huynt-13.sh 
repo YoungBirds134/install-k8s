@@ -1,0 +1,13 @@
+    ------CONTENT----------
+    #!/bin/bash
+
+    cd /home/huynt/bin/app/jenkins
+    curl -sO https://jenkins.congcu24h.com/jnlpJars/agent.jar
+    java -jar agent.jar -jnlpUrl https://jenkins.congcu24h.com/computer/Agent%20inbound%2Dagent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/huynt/bin/app/jenkins"
+
+    ------CONTENT----------
+
+    sudo nano  /usr/local/bin/jenkins-agent-huynt-13.sh 
+
+    sudo chmod 744 /usr/local/bin/jenkins-agent-huynt-13.sh 
+sudo chmod 664 /etc/systemd/system/jenkins-agent-huynt-13.service
