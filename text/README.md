@@ -194,6 +194,9 @@
 
     #Thông tin các ReplicaSet
         kubectl get rs -o wide
+    #Token K8s Dasboard
+
+        kubectl -n kubernetes-dashboard create token admin-user
 
 ---------------------------------------------------------------------------------------
 #common

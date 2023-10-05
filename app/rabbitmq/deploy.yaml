@@ -1,0 +1,192 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: devops-tools
+  name: rabbitmq-config
+data:
+  enabled_plugins: |
+    [rabbitmq_federation,rabbitmq_management,rabbitmq_peer_discovery_k8s].
+  rabbitmq.conf: |
+    loopback_users.guest = false
+    listeners.tcp.default = 5672
+    cluster_formation.peer_discovery_backend  = rabbit_peer_discovery_k8s
+    cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
+    cluster_formation.k8s.address_type = hostname
+    
+    cluster_formation.node_cleanup.only_log_warning = true
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: devops-tools
+  name: rabbitmq
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: devops-tools
+  name: rabbitmq
+rules:
+- apiGroups:
+    - ""
+  resources:
+    - endpoints
+  verbs:
+    - get
+    - list
+    - watch
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: devops-tools
+  name: rabbitmq
+subjects:
+- kind: ServiceAccount
+  name: rabbitmq
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  
+  name: rabbitmq
+---
+apiVersion: v1
+	kind: Secret
+	metadata:
+    namespace: devops-tools
+	  name: rabbit-secret
+	type: Opaque
+	data:
+	  
+      RABBITMQ_ERLANG_COOKIE: V0lXVkhDRFRDSVVBV0FOTE1RQVc=
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: devops-tools
+  name: rabbitmq
+spec:
+  serviceName: rabbitmq
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      serviceAccountName: rabbitmq
+      initContainers:
+      - name: config
+        image: busybox
+        command: ['/bin/sh', '-c', 'cp /tmp/config/rabbitmq.conf /config/rabbitmq.conf && ls -l /config/ && cp /tmp/config/enabled_plugins /etc/rabbitmq/enabled_plugins']
+        volumeMounts:
+        - name: config
+          mountPath: /tmp/config/
+          readOnly: false
+        - name: config-file
+          mountPath: /config/
+        - name: plugins-file
+          mountPath: /etc/rabbitmq/
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3.8-management
+        ports:
+        - containerPort: 15672
+          name: discovery
+        - containerPort: 5672
+          name: amqp
+        env:
+        - name: RABBIT_POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: RABBIT_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: RABBITMQ_NODENAME
+          value: rabbit@$(RABBIT_POD_NAME).rabbitmq.$(RABBIT_POD_NAMESPACE).svc.cluster.local
+        - name: RABBITMQ_USE_LONGNAME
+          value: "true"
+        - name: RABBITMQ_CONFIG_FILE
+          value: "/config/rabbitmq"
+        - name: RABBITMQ_ERLANG_COOKIE
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-secret
+              key: RABBITMQ_ERLANG_COOKIE
+        - name: K8S_HOSTNAME_SUFFIX
+          value: .rabbitmq.$(RABBIT_POD_NAMESPACE).svc.cluster.local
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/rabbitmq
+          readOnly: false
+        - name: config-file
+          mountPath: /config/
+        - name: plugins-file
+          mountPath: /etc/rabbitmq/
+      volumes:
+      - name: config-file
+        emptyDir: {}
+      - name: plugins-file
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: rabbitmq-config
+          defaultMode: 0755
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "gp2"
+      resources:
+        requests:
+          storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: devops-tools
+  name: rabbitmq
+spec:
+  clusterIP: None
+  ports:
+  - port: 15672
+    targetPort: 15672
+    name: discovery
+  - port: 5672
+    targetPort: 5672
+    name: amqp
+  selector:
+    
+    app: rabbitmq
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: devops-tools
+  name: rabbitmq-ui-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/issuer: "letsencrypt-prod"
+spec:
+  tls:
+   - hosts:
+      - kafka.congcu24h.com #domain
+     secretName:  test-domain-tls
+  rules:
+  - host: kafka.congcu24h.com #domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rabbitmq
+            port:
+              number: 15672

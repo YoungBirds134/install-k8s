@@ -1,0 +1,8 @@
+I have no name!@rabbit-rabbitmq-0:/$  rabbitmqctl hash_password NTH@13042000
+Will hash password NTH@13042000
+oghIcy4Xsqcm7PeDyDCzFabU3+AOGZchKVtSlDG8Mg6rMw1p
+I have no name!@rabbit-rabbitmq-0:/$ ^C
+I have no name!@rabbit-rabbitmq-0:/$ 
+
+rabbitmqctl add_user user NTH@13042000
+curl -4su guest:guest -X GET localhost:15672/api/auth/oghIcy4Xsqcm7PeDyDCzFabU3+AOGZchKVtSlDG8Mg6rMw1p/NTH@13042000
