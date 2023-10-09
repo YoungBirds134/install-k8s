@@ -21,4 +21,7 @@
 
             ------
 -------
+docker exec -ti spark-master sh -c  "cd data &&  /spark/bin/spark-submit --class com.bd.streaming.hive.CartStreamingHiveApp --master spark://spark-master:7077 cart-stream-processing-1.0-SNAPSHOT-all.jar"
 
+        5. Bug không tạo máy ảo được trong  jupyter do thiếu cấu hình ingress
+           https://aptro.github.io/server/architecture/2016/06/21/Jupyter-Notebook-Nginx-Setup.html
