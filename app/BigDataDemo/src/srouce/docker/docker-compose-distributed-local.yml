@@ -167,7 +167,7 @@ services:
       - "8888:8888"
     volumes:
       - $PWD/docker/jupyter/shared:/home/jovyan/work
-  
+
   kafdrop:
     image: obsidiandynamics/kafdrop
     restart: "no"
@@ -179,6 +179,17 @@ services:
     depends_on:
       - "kafka"
 
+#  hue:
+#      image: gethue/hue:latest
+#      hostname: hue
+#      container_name: hue
+#      dns: 8.8.8.8
+#      ports:
+#      - "8888:8888"
+#      volumes:
+#        - ./hue.ini:/usr/share/hue/desktop/conf/z-hue.ini
+#      depends_on:
+#      - "hive-server"
 
 #volumes:
 #  hadoop_namenode:

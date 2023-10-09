@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf-jupyter
+  namespace: hadoop
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes  1;
+    events {
+      worker_connections  10240;
+    }
+    http {
+      upstream jupyter {
+        server 192.168.1.11:8888;
+      }
+      server {
+        listen       80;
+        server_name  localhost;
+        location / {
+          #root   /usr/share/nginx/html; #Change this line
+          #index  index.html index.htm;
+          proxy_pass http://jupyter;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+        
+        location ~ /api/kernels/ {
+        proxy_pass            http://jupyter;
+        proxy_set_header      Host $host;
+        # websocket support
+        proxy_http_version    1.1;
+        proxy_set_header      Upgrade "websocket";
+        proxy_set_header      Connection "Upgrade";
+        proxy_read_timeout    86400;
+       }  
+       
+
+      }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-jupyter
+  namespace: hadoop
+spec:
+  selector:
+    matchLabels:
+      app: nginx-jupyter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-jupyter
+    spec:
+      containers:
+      - name: nginx-jupyter
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+            - name: nginx-conf-jupyter
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+      volumes:
+      - name: nginx-conf-jupyter
+        configMap:
+          name: nginx-conf-jupyter
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter-service
+  namespace: hadoop
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 80
+  selector:
+    app: nginx-jupyter
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: hadoop
+  name: jupyter-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    #nginx.ingress.kubernetes.io/rewrite-target: /$2
+    cert-manager.io/issuer: "letsencrypt-prod"
+spec:
+  tls:
+   - hosts:
+      - jupyter.congcu24h.com #domain
+     secretName:  test-domain-tls
+  rules:
+  - host: jupyter.congcu24h.com #domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: jupyter-service
+            port:
+              number: 8080
