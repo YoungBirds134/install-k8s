@@ -1,0 +1,88 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nginx-conf-spark-notebook
+  namespace: default
+  uid: bc956b80-baa8-42cb-82d5-1a8d9e4d14a4
+  resourceVersion: '1330818'
+  creationTimestamp: '2023-10-06T18:01:39Z'
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"v1","data":{"nginx.conf":"user nginx;\nworker_processes 
+      1;\nevents {\n  worker_connections  10240;\n}\nhttp {\n  upstream
+      spark-notebook {\n    server 192.168.1.11:9999;\n  }\n  server {\n   
+      listen       80;\n    server_name  localhost;\n    location / {\n     
+      #root   /usr/share/nginx/html; #Change this line\n      #index  index.html
+      index.htm;\n      proxy_pass http://spark-notebook;\n     
+      proxy_set_header Host $host;\n      proxy_set_header X-Real-IP
+      $remote_addr;\n      proxy_set_header X-Forwarded-For
+      $proxy_add_x_forwarded_for;\n      proxy_set_header X-Forwarded-Proto
+      $scheme;\n    }\n 
+      }\n}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"nginx-conf-spark-notebook","namespace":"default"}}
+  managedFields:
+    - manager: kubectl-client-side-apply
+      operation: Update
+      apiVersion: v1
+      time: '2023-10-06T18:01:39Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:data: {}
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:kubectl.kubernetes.io/last-applied-configuration: {}
+    - manager: dashboard
+      operation: Update
+      apiVersion: v1
+      time: '2023-10-09T09:42:52Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:data:
+          f:nginx.conf: {}
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes  1;
+    events {
+      worker_connections  10240;
+    }
+    http {
+      upstream spark-notebook {
+        server 192.168.1.11:8889 max_fails=3;
+      }
+      server {
+        charset utf-8;
+        listen       80;
+        server_name  localhost;
+        location / {
+          #root   /usr/share/nginx/html; #Change this line
+          #index  index.html index.htm;
+          proxy_pass http://spark-notebook;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+        
+
+        location /static/ {
+        
+          \# Uncomment to expose the static file directories.
+            
+          \## autoindex on;
+            
+          \# If Hue was installed with packaging install:
+            
+          alias /usr/lib/hue/build/static/;
+            
+          \# Or if on a parcel install:
+            
+          \## /opt/cloudera/parcels/CDH/lib/hue/build/static/;
+            
+          expires 30d;
+            
+          add_header Cache-Control public;
+        
+        }        
+      }
+    }
