@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf-pi-hole
+  namespace: devops-tools
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes  1;
+    events {
+      worker_connections  10240;
+    }
+    http {
+      upstream pi-hole {
+        server 192.168.1.11:9999;
+      }
+      server {
+        listen       80;
+        server_name  localhost;
+        autoindex on;
+        autoindex_localtime on;
+        autoindex_exact_size on;
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        location / {
+          #root   /usr/share/nginx/html; #Change this line
+          #index  index.html index.htm;
+          proxy_pass http://pi-hole;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_read_timeout 90;
+        } 
+        location /admin {
+          #root   /usr/share/nginx/html; #Change this line
+          #index  index.html index.htm;
+          proxy_pass http://pi-hole;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_read_timeout 90;
+        } 
+        location = /favicon.ico {
+                rewrite . /favicon.png;
+        }
+
+      }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-pi-hole
+  namespace: devops-tools
+spec:
+  selector:
+    matchLabels:
+      app: nginx-pi-hole
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-pi-hole
+    spec:
+      containers:
+      - name: nginx-pi-hole
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+            - name: nginx-conf-pi-hole
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+      volumes:
+      - name: nginx-conf-pi-hole
+        configMap:
+          name: nginx-conf-pi-hole
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pi-hole-service
+  namespace: devops-tools
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 80
+  selector:
+    app: nginx-pi-hole
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: devops-tools
+  name: pi-hole-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+#    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    cert-manager.io/issuer: "letsencrypt-prod"
+spec:
+  tls:
+   - hosts:
+      - pi-hole.congcu24h.com #domain
+     secretName:  test-domain-tls
+  rules:
+  - host: pi-hole.congcu24h.com #domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: pi-hole-service
+            port:
+              number: 8080
