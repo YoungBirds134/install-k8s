@@ -25,3 +25,39 @@ docker exec -ti spark-master sh -c  "cd data &&  /spark/bin/spark-submit --class
 
         5. Bug không tạo máy ảo được trong  jupyter do thiếu cấu hình ingress
            https://aptro.github.io/server/architecture/2016/06/21/Jupyter-Notebook-Nginx-Setup.html
+
+
+
+
+
+------ Cấu hình Cho Spark kết nối Kafka (https://spark.apache.org/docs/latest/structured-streaming-kafka-integration.html#deploying)
+
+    --------Cài thư viện trong từng spark container 
+
+    docker exec -ti spark-master sh -c  " /spark/bin/spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0"
+
+    docker exec -ti spark-worker-1 sh -c  " /spark/bin/spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0"
+
+    --------------------- Cấu hình version cho spark session ---
+
+        https://stackoverflow.com/questions/70374571/connecting-pyspark-with-kafka
+
+        scala_version = '2.12'
+        spark_version = '3.1.2'
+        # TODO: Ensure match above values match the correct versions
+        packages = [
+            f'org.apache.spark:spark-sql-kafka-0-10_{scala_version}:{spark_version}',
+            'org.apache.kafka:kafka-clients:3.2.1'
+        ]
+        # Create a Spark session
+        spark = SparkSession.builder \
+            .appName("Cart Streaming Processing") \
+            .config("spark.driver.allowMultipleContexts", "true") \
+            .config("hive.metastore.uris", "thrift://hive-metastore:9083") \
+            .config("spark.sql.warehouse.dir", "hdfs://namenode:9000/hive") \
+            .config("spark.jars.packages", ",".join(packages))\
+            .enableHiveSupport() \
+            .getOrCreate()
+
+    --------------------- Cấu hình version cho spark session ---
+

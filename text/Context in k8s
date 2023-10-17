@@ -1,12 +1,17 @@
 ------- tải file config từ master về worker 
 
-scp huynt@192.168.1.13:/etc/kubernetes/admin.conf ~/.kube/config-mycluster
+    scp huynt@192.168.1.13:/etc/kubernetes/admin.conf ~/.kube/config-mycluster
 
 ------- export worker để sử dụng - hiệu lực trong 1 session 
 
-export KUBECONFIG=/home/huynt/.kube/config-mycluster/admin.conf
+    export KUBECONFIG=/home/huynt/.kube/config-mycluster/admin.conf
 
 
 ------ 
 
-kubectl config view
+    kubectl config view
+
+---- scp folder 
+
+scp -r huynt@192.168.1.11:/home/huynt/bin/docker/pihole /home/huynt/bin
+
