@@ -59,7 +59,7 @@ object CartStreamingHiveApp {
         orders.foreach(order => {
           result += ProductSalesRecord(order.productId, order.productCategory,
             order.amount * order.price, cart.issuedTimestamp)
-        })
+        }) 
         result
       }).foreachRDD(rdd => {
       import sqlContext.implicits._

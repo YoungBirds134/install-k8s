@@ -1,3 +1,29 @@
+-----------------CRITICAL----------------------------------
+
+
+        1. Khi khởi động lại cụm Hadoop phải cài lại python 3.9 và Java 8 cho Jupyter Notebook
+
+        2. sudo apt-get update 
+           && sudo apt-get install openjdk-8-jdk -y
+
+        3.
+            sudo apt update
+            && sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev -y
+            && wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
+            && tar -xf Python-3.9.1.tgz
+            && cd Python-3.9.1
+               ./configure --enable-optimizations
+            && make -j 12
+            && sudo make altinstall
+            && alias python3=python3.9
+
+
+         4.
+             pip install --upgrade pip  
+             pip install requests-html  
+             pip install selenium  
+-----------------CRITICAL----------------------------------
+
 ---https://github.com/haiphucnguyen/BigDataDemo/tree/master
 
         1.  Cài  Java 8 

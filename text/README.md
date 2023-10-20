@@ -147,6 +147,11 @@
     #Tạo token cho node worker join vào
         kubeadm token create --print-join-command
 
+        ----------------
+        kubeadm join 192.168.1.13:6443 --token kcu4ig.5695difdggce8dyz \
+                --discovery-token-ca-cert-hash sha256:68edee5b84d097240d122ffd4d5846b9f0717ac86ce498e6507afd551d0a8c9d 
+
+        ------------
         kubeadm join
     #Triển khai file yaml
           kubectl apply -f <name-file>

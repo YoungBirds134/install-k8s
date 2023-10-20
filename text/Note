@@ -29,3 +29,38 @@
     https://www.youtube.com/watch?v=sSwlcTwG52U
 
 ---
+    sudo apt  install jq  
+    kubectl get nodes huynt-11 -o json | jq .status.addresses
+---
+    In this video, I address a common issue encountered when using kubectl exec and kubectl logs commands in Kubernetes. If you're experiencing the error message "Error from server (NotFound): the server could not find the requested resource (pods/log nginx)", this video is for you.
+
+    I provide a step-by-step guide on how to resolve the issue by editing the kubelet's configuration file and adding the kubelet IP address to the configuration. By following along with the instructions, you'll be able to overcome the error and successfully execute kubectl exec and kubectl logs commands on your nginx pod.
+
+    Don't let the "NotFound" error hinder your troubleshooting and debugging process. Watch the video now to learn the solution and ensure a smooth experience working with Kubernetes.
+
+    If you find the content helpful, please consider liking, subscribing, and sharing the video with others who may encounter a similar issue. Feel free to leave any questions or feedback in the comments section, and I'll be glad to assist you.
+
+    Join me in resolving the "NotFound" error and unlocking the full potential of kubectl exec and kubectl logs commands in Kubernetes.
+
+    ```shell
+    Error from server (NotFound): the server could not find the requested resource ( pods/log pod)
+    error: unable to upgrade connection: pod does not exist
+    Error from server (NotFound): pods "pod" not found
+    ```
+
+    ```shell
+    kubectl get nodes
+    kubectl get nodes worker72  -o wide
+    kubectl get nodes worker72 -o json | jq .status.addresses
+
+    # master71
+    sudo vim /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    Environment="KUBELET_EXTRA_ARGS=--node-ip=192.168.56.71"
+
+    # worker72
+    sudo vim /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    Environment="KUBELET_EXTRA_ARGS=--node-ip=192.168.56.72"
+
+    sudo systemctl daemon-reload
+    sudo systemctl restart kubelet
+    ```
