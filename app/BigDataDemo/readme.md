@@ -87,3 +87,10 @@ docker exec -ti spark-master sh -c  "cd data &&  /spark/bin/spark-submit --class
 
     --------------------- Cấu hình version cho spark session ---
 
+    ----*END POINT
+            http://localhost:8088/cluster/nodes reource manager
+            http://localhost:8082/ spark master
+            http://localhost:50075/ data node
+            http://localhost:50070/dfshealth.html#tab-overview name node
+            http://localhost:8042/node node manager
+            http://localhost:8188/applicationhistory history server
