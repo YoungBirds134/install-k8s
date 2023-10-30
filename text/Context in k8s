@@ -15,3 +15,6 @@
 
 scp -r huynt@192.168.1.11:/home/huynt/bin/docker/pihole /home/huynt/bin
 
+scp -r huynt@192.168.1.11:/home/huynt/bin/bin/app/BigDataDemo/docker/ /home/huynt/bin-11
+
+

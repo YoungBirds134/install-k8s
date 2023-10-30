@@ -27,6 +27,8 @@
 ---https://github.com/haiphucnguyen/BigDataDemo/tree/master
 
         1.  Cài  Java 8 
+            sudo apt update
+            sudo apt install openjdk-8-jdk  -y
         2. Build ra bản build jar của java 
             ./gradlew shadowJar
             gradle wrapper
@@ -42,6 +44,8 @@
             docker cp /home/huynt/bin/bin/app/BigDataDemo/cart-stream-processing/build/libs/cart-stream-processing-1.0-SNAPSHOT.jar spark-master:data
 
             docker cp /home/huynt/bin/bin/app/BigDataDemo/cart-stream-processing/build/libs/cart-stream-processing-1.0-SNAPSHOT-all.jar spark-master:data            
+            
+            docker cp /home/huynt/bin/bin/app/BigDataDemo/cart-stream-processing/build/libs/cart-stream-processing-1.0-SNAPSHOT.jar spark-master:data
 
             docker exec -ti spark-master sh -c  "cd data && /spark/bin/spark-submit --class com.bd.streaming.hive.CartStreamingHiveApp --master spark://spark-master:7077 cart-stream-processing-1.0-SNAPSHOT-all.jar "
 
@@ -94,3 +98,12 @@ docker exec -ti spark-master sh -c  "cd data &&  /spark/bin/spark-submit --class
             http://localhost:50070/dfshealth.html#tab-overview name node
             http://localhost:8042/node node manager
             http://localhost:8188/applicationhistory history server
+
+
+
+              docker cp D:\dataset\MillionSongSubset jupyter:~/project/code    
+              ssh -L 8888:localhost:8888 huynt@congcu24h.ddns.net
+              
+              ssh -L 9092:localhost:9092 huynt@congcu24h.ddns.net
+              ssh -L 9093:kafka:9093 huynt@congcu24h.ddns.net
+              ssh -L 2181:localhost:2182 huynt@congcu24h.ddns.net
