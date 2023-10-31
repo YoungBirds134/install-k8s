@@ -44,7 +44,7 @@
             docker cp /home/huynt/bin/bin/app/BigDataDemo/cart-stream-processing/build/libs/cart-stream-processing-1.0-SNAPSHOT.jar spark-master:data
 
             docker cp /home/huynt/bin/bin/app/BigDataDemo/cart-stream-processing/build/libs/cart-stream-processing-1.0-SNAPSHOT-all.jar spark-master:data            
-            
+
             docker cp /home/huynt/bin/bin/app/BigDataDemo/cart-stream-processing/build/libs/cart-stream-processing-1.0-SNAPSHOT.jar spark-master:data
 
             docker exec -ti spark-master sh -c  "cd data && /spark/bin/spark-submit --class com.bd.streaming.hive.CartStreamingHiveApp --master spark://spark-master:7077 cart-stream-processing-1.0-SNAPSHOT-all.jar "
@@ -107,3 +107,5 @@ docker exec -ti spark-master sh -c  "cd data &&  /spark/bin/spark-submit --class
               ssh -L 9092:localhost:9092 huynt@congcu24h.ddns.net
               ssh -L 9093:kafka:9093 huynt@congcu24h.ddns.net
               ssh -L 2181:localhost:2182 huynt@congcu24h.ddns.net
+              ssh -L 10000:localhost:10000 huynt@congcu24h.ddns.net
+
