@@ -1,0 +1,2 @@
+1. pip install selenium==4.9.0 (https://github.com/appium/python-client/issues/863)
+2. Sửa tham số webdriver.Firefox (https://stackoverflow.com/questions/70326002/typeerror-webdriver-init-got-an-unexpected-keyword-argument-firefox-opti)

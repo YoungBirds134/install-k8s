@@ -19,9 +19,14 @@
 
 
          4.
+         docker exec -it -u 0 jupyter /bin/bash
              pip install --upgrade pip  
              pip install requests-html  
              pip install selenium  
+             pip install kafka-python
+             pip install pyspark 
+             pip install --force-reinstall pyspark==2.4.6
+
 -----------------CRITICAL----------------------------------
 
 ---https://github.com/haiphucnguyen/BigDataDemo/tree/master
@@ -103,9 +108,14 @@ docker exec -ti spark-master sh -c  "cd data &&  /spark/bin/spark-submit --class
 
               docker cp D:\dataset\MillionSongSubset jupyter:~/project/code    
               ssh -L 8888:localhost:8888 huynt@congcu24h.ddns.net
-              
+              ssh -L 50070:localhost:50070 huynt@congcu24h.ddns.net
               ssh -L 9092:localhost:9092 huynt@congcu24h.ddns.net
               ssh -L 9093:kafka:9093 huynt@congcu24h.ddns.net
               ssh -L 2181:localhost:2182 huynt@congcu24h.ddns.net
               ssh -L 10000:localhost:10000 huynt@congcu24h.ddns.net
+              ssh -L 8042:localhost:8042 huynt@congcu24h.ddns.net
+              ssh -L 50075:localhost:50075 huynt@congcu24h.ddns.net
+              ssh -L 8088:localhost:8088 huynt@congcu24h.ddns.net
+              ssh -L 8899:localhost:8899 huynt@congcu24h.ddns.net
+              ssh -L 5000:localhost:5000 huynt@congcu24h.ddns.net
 
