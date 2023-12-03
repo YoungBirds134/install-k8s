@@ -72,6 +72,8 @@
     && sudo ufw allow 6443
     && sudo ufw allow 6443/tcp
     && kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+    kubectl delete -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Sử dụng khi chỉ dùng một node master (huynt là tên node)
     kubectl taint nodes huynt node-role.kubernetes.io/control-plane-
@@ -130,8 +132,8 @@
 -------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #common k8s
-17-11-2023(kubeadm join 192.168.1.13:6443 --token qe1o0f.on2zlgf0i3ntlmz3 \
-	--discovery-token-ca-cert-hash sha256:2fb9cda646971f41786594caab3faf9c239235a4e5ea363e14711a4e7a487623 )
+17-11-2023(kubeadm join 192.168.1.13:6443 --token yu8sri.ckiglmr9wv0ihjjl \
+	--discovery-token-ca-cert-hash sha256:8d52116b50407be2c87f0cec01bcc9a445dd7729d3546a55695f0069b677ca3f)
     #reset Node
         sudo kubeadm reset 
 

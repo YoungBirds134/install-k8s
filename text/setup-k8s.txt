@@ -22,3 +22,7 @@ sudo apt-get install helm --yes
 
 # Add helm repo
 helm repo add stable https://kubernetes-charts.storage.googleapis.com
+
+kubectl label nodes huynt-11 kubernetes.io/role=worker
+
+
