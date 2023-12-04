@@ -26,6 +26,12 @@
 
 
         token gitlab: glpat-5gQ7VRmzDUAPTyA1sTb2
+
+        docker-hub: 
+
+        docker login -u youngbird
+        dckr_pat_def5zf3NqhecEUctxBk_0o46G74
+
         
 
 
