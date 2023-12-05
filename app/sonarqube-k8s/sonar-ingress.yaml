@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sonar
+  namespace: sonar
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    cert-manager.io/issuer: letsencrypt-prod-cloudflare
+spec:
+  tls:
+    - hosts:
+      - sonar.congcu24h.com
+      secretName: my-domain-test
+  rules:
+  - host: sonar.congcu24h.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: sonar-svc
+            port:
+              number: 9000
