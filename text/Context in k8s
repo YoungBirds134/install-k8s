@@ -25,6 +25,9 @@ scp -r huynt@192.168.1.11:/home/huynt/bin/bin/app/BigDataDemo/docker/ /home/huyn
 
 scp -r huynt@192.168.1.13:/home/huynt/bin-11 /home/huynt/Documents/data-old
 
+sudo scp -r huynt@192.168.1.11:/home/huynt/bin/src/sonarqube-on-kubernetes /Users/nguyenthanhhuy/huy/studies/source/gitlab/install-k8s/app
+
+
 
 
 

@@ -26,7 +26,7 @@
 
 
         token gitlab: glpat-5gQ7VRmzDUAPTyA1sTb2
-
+token sonar gitlab read api: glpat-dUQ4ZUzsWgNC1WmeXssS
         docker-hub: 
 
         docker login -u youngbird
