@@ -20,18 +20,6 @@ pipeline {
         }
       }
     }
-    stage('Set Version Number') {
-      steps {
-        script {
-          // Use Version Number Plugin to determine version number
-          def VERSION_NUMBER = VersionNumber(versionNumberString: '${BUILD_DATE_FORMATTED, "yyyyMMdd"}-${Branch}-${BUILDS_TODAY}')
-          def NAME_IMAGE = "$JOB_NAME-${env.VERSION_NUMBER}"
-          echo "Version Number: ${VERSION_NUMBER}"
-          echo "$JOB_NAME"
-
-        }
-      }
-    }
 
     stage('Check out') {
       steps {
@@ -51,6 +39,13 @@ pipeline {
               [$class: 'RelativeTargetDirectory', relativeTargetDir: '$JOB_NAME-${Branch}-config']
             ], userRemoteConfigs: [
               [credentialsId: '40cc97dd-78de-4ffc-a1f7-f42794debc37', url: 'https://gitlab.com/YoungBirds134/$JOB_NAME-${Branch}-config.git']
+            ])
+            checkout scmGit(branches: [
+              [name: '*/main']
+            ], browser: gitLabBrowser('https://gitlab.com/YoungBirds134/helm.git'), extensions: [
+              [$class: 'RelativeTargetDirectory', relativeTargetDir: 'helm']
+            ], userRemoteConfigs: [
+              [credentialsId: '40cc97dd-78de-4ffc-a1f7-f42794debc37', url: 'https://gitlab.com/YoungBirds134/helm.git']
             ])
 
             sh "ls -lart ./*"
@@ -82,25 +77,54 @@ pipeline {
         }
       }
     }
+   
 
     stage('Build Image') {
       steps {
         script {
+          def VERSION_NUMBER = VersionNumber(versionNumberString: '${BUILD_DATE_FORMATTED, "yyyyMMdd"}-${Branch}-${BUILDS_TODAY}')
+          def NAME_IMAGE = "$JOB_NAME-${VERSION_NUMBER}"
+
+          echo "NAME_IMAGE: ${NAME_IMAGE}"
+
           sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
           echo 'Login Completed'
-          sh "docker build -t ${env.NAME_IMAGE} ."
-          sh "docker tag ${env.NAME_IMAGE} $DOCKERHUB_CREDENTIALS_USR/${env.NAME_IMAGE}"
-          sh "docker push $DOCKERHUB_CREDENTIALS_USR/${env.NAME_IMAGE}"
-          sh "docker rmi ${env.NAME_IMAGE}"
+
+          sh "cd $JOB_NAME/ && docker build -t $DOCKERHUB_CREDENTIALS_USR/$JOB_NAME:${NAME_IMAGE} ."
+          sh "cd $JOB_NAME/ && docker tag $DOCKERHUB_CREDENTIALS_USR/$JOB_NAME:${NAME_IMAGE} $DOCKERHUB_CREDENTIALS_USR/$JOB_NAME:latest "
+          sh "cd $JOB_NAME/ && docker push $DOCKERHUB_CREDENTIALS_USR/$JOB_NAME:${NAME_IMAGE}"
+          sh "cd $JOB_NAME/ && docker rmi $DOCKERHUB_CREDENTIALS_USR/$JOB_NAME:${NAME_IMAGE}"
           sh 'docker logout'
 
+           // Navigate to the helm/myapp directory
+                    dir('helm/myapp') {
+                        // Define the content to be added to values.yaml
+                        def contentToAdd = 
+                        """
+image:
+    repository: ${DOCKERHUB_CREDENTIALS_USR}/${JOB_NAME}
+    tag: ${NAME_IMAGE}
+    pullPolicy: Always 
+                        """
+
+                        // Use echo and heredoc to append content to values.yaml
+                        sh "echo '${contentToAdd}' >> values.yaml"
+                    }
+                // Check if the release exists
+                def releaseExists = sh(script: 'helm list -q | grep -w $JOB_NAME', returnStatus: true) == 0
+
+                // Use helm install or helm upgrade based on release existence
+                if (releaseExists) {
+                    sh 'cd helm/myapp && helm upgrade $JOB_NAME . -f values.yaml'
+                } else {
+                    sh 'cd helm/myapp && helm install $JOB_NAME . -f values.yaml'
+                }          }
         }
       }
     }
-  }
 
-  // ... other stages ...
-}
+    // ... other stages ...
+  }
 
 <!-- https://devopscube.com/declarative-pipeline-parameters/ -->
 
