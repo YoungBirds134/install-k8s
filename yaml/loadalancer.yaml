@@ -6,7 +6,7 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-  - 192.168.1.11-192.168.1.11 #IP HOST dùng ingress controller 
+  - 192.168.1.13-192.168.1.13 #IP HOST dùng ingress controller 
   autoAssign: true
 ---
 apiVersion: metallb.io/v1beta1

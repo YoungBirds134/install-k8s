@@ -5,6 +5,7 @@
 
     pm2 start /home/huynt/bin/src/script/cloudflare/index.js  --name change-ip-auto  --cron-restart= "*/2 * * * *" --watch && pm2 save
 
+    pm2 start index.js  --name change-ip-auto  --cron-restart= "*/1 * * * *" --watch && pm2 save
 
 ---------SERVER-----------
 

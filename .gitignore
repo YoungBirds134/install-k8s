@@ -288,6 +288,8 @@ typings/
 
 # Output of 'npm pack'
 *.tgz
+*.lock.db
+*.mv.db
 
 # Yarn Integrity file
 .yarn-integrity

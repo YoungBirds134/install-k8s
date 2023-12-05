@@ -2,16 +2,33 @@
 
     scp huynt@192.168.1.13:/etc/kubernetes/admin.conf ~/.kube/config-mycluster
 
+   sudo scp huynt@192.168.1.13:/etc/kubernetes/admin.conf ~/.kube/config-mycluster
+
+
 ------- export worker để sử dụng - hiệu lực trong 1 session 
 
     export KUBECONFIG=/home/huynt/.kube/config-mycluster/admin.conf
 
+    export KUBECONFIG=/home/huynt/.kube/config-mycluster
 
 ------ 
 
     kubectl config view
 
 ---- scp folder 
+scp -r huynt@192.168.1.13:/home/bin-11 /home/huynt/Documents/data-old
 
 scp -r huynt@192.168.1.11:/home/huynt/bin/docker/pihole /home/huynt/bin
+
+scp -r huynt@192.168.1.11:/home/huynt/bin/bin/app/BigDataDemo/docker/ /home/huynt/bin-11
+
+
+scp -r huynt@192.168.1.13:/home/huynt/bin-11 /home/huynt/Documents/data-old
+
+
+
+
+
+
+
 

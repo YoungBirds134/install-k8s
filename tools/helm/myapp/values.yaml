@@ -1,0 +1,17 @@
+image:
+  repository: youngbird/my-app
+  tag: latest
+  pullPolicy: Always
+
+replicas: 1
+
+port: 5000
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    cert-manager.io/issuer: letsencrypt-prod-cloudflare
+  tls:
+    - secretName: my-domain-test
+      hosts:
+        - beta.congcu24h.com
+
