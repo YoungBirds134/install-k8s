@@ -37,3 +37,9 @@
         
 
 
+\
+           -Dsonar.projectKey=YoungBirds134_my-app_AYw67RtGyHTmhM5jm_Qu \
+           -Dsonar.sources=. \
+           -Dsonar.css.node=. \
+           -Dsonar.host.url=http://10.102.4.83:9000 \
+           -Dsonar.login=26ae211fd2b056d9f19ecdf9b41c6e95c5581237"
