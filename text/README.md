@@ -102,9 +102,9 @@
     kubectl -n kubernetes-dashboard create token admin-user
 
 -------------------------------------------------------------------------------------------------------------------#install ingress-nginx controller
+    kubectl get pods --namespace=ingress-nginx
 
     kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.1/deploy/static/provider/cloud/deploy.yaml
-    kubectl get pods --namespace=ingress-nginx
 -------------------------------------------------------------------------------------------------------------------#install loadalancer
 
     # see what changes would be made, returns nonzero returncode if different
