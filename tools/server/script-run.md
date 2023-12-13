@@ -1,5 +1,6 @@
 #1. Create service
 
+    sudo nano /etc/systemd/system/auto-clouflare.service
 
     sudo nano /etc/systemd/system/<name>.service
 
@@ -19,6 +20,8 @@
 #2. Create bash file
     
     
+        sudo nano  /usr/local/bin/auto-cloudflare.sh
+
     sudo nano  /usr/local/bin/<name>.sh
 
         ------CONTENT----------
@@ -34,6 +37,9 @@
 
     sudo chmod 744 /usr/local/bin/<name>.sh
     sudo chmod 664 /etc/systemd/system/<name>.service
+
+     sudo chmod 744 /usr/local/bin/auto-cloudflare.sh
+    sudo chmod 664 /etc/systemd/system/auto-cloudflare.service
 
 #4. Reload daemon
 

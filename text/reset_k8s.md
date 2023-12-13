@@ -24,15 +24,17 @@
         sudo chmod -R 777 /etc/kubernetes
         export KUBECONFIG=/home/huynt/.kube/config-mycluster
 
+        * https://gitlab.com/api/v4
 
-        token gitlab: glpat-5gQ7VRmzDUAPTyA1sTb2
-        token sonar gitlab read api: glpat-dUQ4ZUzsWgNC1WmeXssS
+
+        *token gitlab: glpat-5gQ7VRmzDUAPTyA1sTb2
+        *token sonar gitlab read api: glpat-dUQ4ZUzsWgNC1WmeXssS
         docker-hub: 
 
         docker login -u youngbird
         dckr_pat_def5zf3NqhecEUctxBk_0o46G74
 
-        token sonar: 26ae211fd2b056d9f19ecdf9b41c6e95c5581237
+        *token sonar: 0d65dc703a789bcad5f4e59c851a8d2a3b105a61
 
         
 
