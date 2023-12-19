@@ -11,9 +11,11 @@ pipeline {
   }
 
   environment {
-    SONARQUBE_SECRET = '0d65dc703a789bcad5f4e59c851a8d2a3b105a61'
+    SONARQUBE_SECRET = 'squ_f2b8b81aa830a81e810b1fc2d7ef0dd40b26eafa'
     SONARQUBE_URL = "http://10.102.4.83:9000" // Set your SonarQube URL here
-    SONARQUBE_TOKEN_NAME = "0d65dc703a789bcad5f4e59c851a8d2a3b105a61" // Set your desired token name here
+    SONARQUBE_TOKEN_NAME = "squ_f2b8b81aa830a81e810b1fc2d7ef0dd40b26eafa" // Set your desired token name here
+    SONARQUBE_PROJECT_KEY = "YoungBirds134_my-app_AYxkau8xhxn6CIicMiL5" // Set your desired token name here
+
     DOCKERHUB_CREDENTIALS = credentials('docker_hub')
 
   }
@@ -144,11 +146,11 @@ pipeline {
           withSonarQubeEnv('sonarqube-container') {
             // This expands the environment variables SONAR_CONFIG_NAME, SONAR_HOST_URL, SONAR_AUTH_TOKEN that can be used by any script.
             sh """${scannerHome}/bin/sonar-scanner \
-           -Dsonar.projectKey=YoungBirds134_my-app_AYxIxrbQn19x4ZIBEiVW\
+           -Dsonar.projectKey=${env.SONARQUBE_PROJECT_KEY}\
            -Dsonar.sources=. \
            -Dsonar.css.node=. \
-           -Dsonar.host.url=http://10.102.4.83:9000 \
-           -Dsonar.login=0d65dc703a789bcad5f4e59c851a8d2a3b105a61 
+           -Dsonar.host.url=${env.SONARQUBE_URL} \
+           -Dsonar.login=${env.SONARQUBE_SECRET}
              """
 
             println env.SONAR_HOST_URL
@@ -165,7 +167,7 @@ pipeline {
             if (reportTaskFileExists) {
               echo "Found report task file"
               def taskProps = readProperties file: "${reportFilePath}"
-              def authString = '0d65dc703a789bcad5f4e59c851a8d2a3b105a61'
+              def authString = "${env.SONARQUBE_SECRET}"
 
               echo "taskId[${taskProps['ceTaskId']}]"
               while (true) {

@@ -34,7 +34,7 @@
         docker login -u youngbird
         dckr_pat_def5zf3NqhecEUctxBk_0o46G74
 
-        *token sonar: 0d65dc703a789bcad5f4e59c851a8d2a3b105a61
+        *token sonar: squ_f2b8b81aa830a81e810b1fc2d7ef0dd40b26eafa
 
         
 
